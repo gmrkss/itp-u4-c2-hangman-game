@@ -46,8 +46,37 @@ def _uncover_word(answer_word, masked_word, character):
     if character not in answer_word:
         return masked_word
 
-# passes all tests except for last two
+# works without helper functions
+# def guess_letter(game, letter):
+#     if (game['masked_word']==game['answer_word'] and game['remaining_misses']>0) or (game['masked_word']!=game['answer_word'] and game['remaining_misses']==0):
+#         raise GameFinishedException
+#     letter=letter.lower()
+#     res=_uncover_word(game['answer_word'], game['masked_word'],letter)
+#     if res!=game['masked_word']:
+#         game['masked_word']=res
+#         game['previous_guesses'].append(letter)
+#     else:
+#         game['remaining_misses']-=1
+#         game['previous_guesses'].append(letter)
+#     if game['masked_word']==game['answer_word'] and game['remaining_misses']>0:
+#         raise GameWonException
+#     if game['masked_word']!=game['answer_word'] and game['remaining_misses']==0:
+#         raise GameLostException
+
+# other way to do this is with helper functions and a modified guess_letter function
+def is_game_won(game):
+    if game['masked_word']==game['answer_word'] and game['remaining_misses']>0:
+        return True
+    return False
+
+def is_game_lost(game):
+    if game['masked_word']!=game['answer_word'] and game['remaining_misses']==0:
+        return True
+    return False
+
 def guess_letter(game, letter):
+    if is_game_won(game) or is_game_lost(game):
+        raise GameFinishedException
     letter=letter.lower()
     res=_uncover_word(game['answer_word'], game['masked_word'],letter)
     if res!=game['masked_word']:
@@ -56,30 +85,10 @@ def guess_letter(game, letter):
     else:
         game['remaining_misses']-=1
         game['previous_guesses'].append(letter)
-    if game['masked_word']==game['answer_word'] and game['remaining_misses']>0:
+    if is_game_won(game):
         raise GameWonException
-    if game['masked_word']!=game['answer_word'] and game['remaining_misses']==0:
+    if is_game_lost(game):
         raise GameLostException
-
-# test code for error handling
-# def guess_letter(game, letter):
-#     try:
-#         letter=letter.lower()
-#         res=_uncover_word(game['answer_word'], game['masked_word'],letter)
-#         if res!=game['masked_word']:
-#             game['masked_word']=res
-#             game['previous_guesses'].append(letter)
-#         else:
-#             game['remaining_misses']-=1
-#             game['previous_guesses'].append(letter)
-#         if game['masked_word']==game['answer_word'] and game['remaining_misses']>0:
-#             raise GameWonException
-#         if game['masked_word']!=game['answer_word'] and game['remaining_misses']==0:
-#             raise GameLostException
-#     except GameWonException:
-#         raise GameFinishedException
-#     except GameLostException:
-#         raise GameFinishedException
 
 
 def start_new_game(list_of_words=None, number_of_guesses=5):
